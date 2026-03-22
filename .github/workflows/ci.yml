@@ -20,30 +20,23 @@ jobs:
   build:
     name: build on ${{ matrix.os_short }}
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
         include:
           - os: windows-latest
             os_short: win
 
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             os_short: linux
+            container: registry.gitlab.steamos.cloud/steamrt/sniper/sdk
 
     steps:
       - name: Prepare env
         shell: bash
         run: |
           echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-      - name: Install (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang g++-multilib
-          echo "CC=clang" >> $GITHUB_ENV
-          echo "CXX=clang++" >> $GITHUB_ENV
 
       - name: Getting SourceMod
         uses: actions/checkout@v4
@@ -54,14 +47,14 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
-      - name: Setting up Python and AMBuild
+      - name: Setting up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip'
 
       - name: Install AMBuild
-        run: pip install git+https://github.com/alliedmodders/ambuild
+        shell: bash
+        run: python3 -m pip install git+https://github.com/alliedmodders/ambuild
 
       - name: Getting own repository
         uses: actions/checkout@v4
@@ -76,10 +69,10 @@ jobs:
 
       - name: Compiling ${{ github.event.repository.name }} files
         working-directory: extension
+        shell: bash
         run: |
-          mkdir build
-          cd build
-          python ../configure.py --enable-optimize --symbol-files --sm-path="${{ github.workspace }}/sourcemod" --targets=x64,x86
+          mkdir build && cd build
+          python3 ../configure.py --enable-optimize --symbol-files --sm-path="${{ github.workspace }}/sourcemod" --targets=x64,x86
           ambuild
 
       - name: Uploading package
