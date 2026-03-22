@@ -85,7 +85,7 @@ jobs:
         run: |
           [ "$RUNNER_OS" = "Linux" ] && export PATH="/usr/bin:$PATH"
           mkdir build && cd build
-          python3 ../configure.py --enable-optimize --symbol-files --sm-path="${{ github.workspace }}/sourcemod" --targets=x64,x86
+          python3 ../configure.py --enable-optimize --symbol-files --sm-path="$GITHUB_WORKSPACE/sourcemod" --targets=x64,x86
           ambuild
 
       - name: Uploading package
