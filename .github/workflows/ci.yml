@@ -6,6 +6,7 @@ on:
     branches:
       - "main"
     paths:
+      - ".github/workflows/ci.yml"
       - "src/**"
       - "third_party/**"
   pull_request:
@@ -55,9 +56,9 @@ jobs:
 
       - name: Setting up Python
         if: runner.os == 'Windows'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Install AMBuild
         shell: bash
@@ -69,11 +70,11 @@ jobs:
           fi
 
       - name: Getting own repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: extension
 
-      - uses: microsoft/setup-msbuild@v2
+      - uses: microsoft/setup-msbuild@v3
         if: runner.os == 'Windows'
         with:
           msbuild-architecture: x64
@@ -89,7 +90,7 @@ jobs:
           ambuild
 
       - name: Uploading package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sm-ext-yyjson-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
           path: extension/build/package
@@ -102,7 +103,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: extension
           sparse-checkout: |
@@ -122,7 +123,7 @@ jobs:
         run: echo "${{ github.event.head_commit.message }}" >> release_notes.md
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
