@@ -47,14 +47,26 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
+      - name: Install Python dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update
+          apt-get install -y python3-pip python3-setuptools
+
       - name: Setting up Python
+        if: runner.os == 'Windows'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install AMBuild
         shell: bash
-        run: python3 -m pip install git+https://github.com/alliedmodders/ambuild
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            /usr/bin/python3 -m pip install git+https://github.com/alliedmodders/ambuild
+          else
+            python3 -m pip install git+https://github.com/alliedmodders/ambuild
+          fi
 
       - name: Getting own repository
         uses: actions/checkout@v4
@@ -71,6 +83,7 @@ jobs:
         working-directory: extension
         shell: bash
         run: |
+          [ "$RUNNER_OS" = "Linux" ] && export PATH="/usr/bin:$PATH"
           mkdir build && cd build
           python3 ../configure.py --enable-optimize --symbol-files --sm-path="${{ github.workspace }}/sourcemod" --targets=x64,x86
           ambuild
