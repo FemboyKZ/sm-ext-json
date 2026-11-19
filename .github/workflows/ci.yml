@@ -21,7 +21,11 @@ jobs:
       matrix:
         platform:
           - { os: windows-latest, os_short: windows }
-          - { os: ubuntu-latest, os_short: linux, image: "registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest" }
+          - {
+              os: ubuntu-latest,
+              os_short: linux,
+              image: "registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest",
+            }
         sm_version:
           - "1.12"
           - "1.13"
