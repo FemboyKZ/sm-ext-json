@@ -22,14 +22,13 @@ jobs:
         platform:
           - { os: windows-latest, os_short: win-latest }
           - { os: ubuntu-latest, os_short: steamrt3, image: "registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest" }
-          - { os: ubuntu-latest, os_short: steamrt4, image: "registry.gitlab.steamos.cloud/steamrt/steamrt4/sdk:latest" }
         sm_version:
           - "1.12"
-          - "latest"
+          - "1.13"
 
         include:
-          - sm_version: latest
-            sm_branch: master
+          - sm_version: "1.13"
+            sm_branch: "master"
 
           - sm_version: "1.12"
             sm_branch: "1.12-dev"
@@ -89,7 +88,7 @@ jobs:
       - name: Uploading package
         uses: actions/upload-artifact@v7
         with:
-          name: sm-ext-json-sm${{ matrix.sm_version }}-${{ matrix.platform.os_short }}-${{ env.GITHUB_SHA_SHORT }}
+          name: sm-ext-json-${{ matrix.platform.os_short }}-sm${{ matrix.sm_version }}-${{ env.GITHUB_SHA_SHORT }}
           path: extension/build/package
 
   create-release:
